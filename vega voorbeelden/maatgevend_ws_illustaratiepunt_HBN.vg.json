@@ -1,0 +1,215 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 800,
+  "height": 300,
+  "padding": 20,
+
+  "data": [
+    {
+      "name": "talud",
+      "values": [
+        {"x": 62.15,  "z": -3.00},         
+        {"x": 62.15,  "z": -3.00},
+        {"x": 84.83,  "z": 1.91},
+        {"x": 89.83,  "z": 1.91},
+        {"x": 97.00,  "z": 4.70},
+        {"x": 103.00,  "z": 4.70},
+        {"x": 105.00,  "z": 3.70}              
+      ]   
+    },
+    {
+      "name": "voorland",
+      "values": [
+        {"x": 0,  "z": -4.00},
+        {"x": 62.15,  "z": -3.00}
+      ]
+    },
+    {
+      "name": "niveaus",
+      "values": [
+        {"x": 0.00,  "WS": 3.00, "c":0},
+	    {"x": 0.00,  "WS": 3.00, "c":1},
+        {"x": 100.00,  "WS": 3.00, "c":0},
+	    {"x": 100.00,  "WS": 3.00, "c":1}
+      ]
+    }      
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": "width",
+      "zero": false,
+      "domain": {"data": "talud", "field": "x"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "domain": {"data": "talud", "field": "z"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": {"data": "niveaus", "field": "c"}
+    }    
+  ],
+
+  "axes": [
+    {
+        "orient": "bottom", 
+        "scale": "xscale",
+        "grid": true,
+        "zorder": "0",
+        "tickSize": 5,
+        "title": "Afstand [m]",
+        "offset": 20,
+        "labelPadding": 1,        
+        "titlePadding": 3,        
+        "encode": {
+            "grid": {
+                "update": {
+                "stroke": {"value": "#777"},
+                "opacity": {"value": 0.3},
+                "strokeWidth":{"value": 0.3},
+                "strokeDash": {"value": [8,4]}                
+                }
+            },
+            "ticks": {
+                "update": {
+                "stroke": {"value": "#777"}
+                }
+            },          
+            "labels": {
+                "update": {
+                    "fill": {"value": "#777"},
+                    "fontSize": {"value": 16},
+                    "align": {"value": "left"},
+                    "baseline": {"value": "middle"},
+                    "dx": {"value": -8},
+                    "dy": {"value": 10}
+                }
+            },
+            "title": {
+                "update": {
+                    "fill": {"value": "#777"},
+                    "font": {"value": "Calibri"},
+                    "fontSize": {"value": 20},
+                    "fontWeight": {"value": "normal"}
+                }
+            }             
+        }
+    },
+    {
+        "orient": "right", 
+        "scale": "yscale",
+        "grid": true,
+        "zorder": "0",
+        "tickSize": 3,
+        "title": "Hoogte [m+NAP]",
+        "offset": 20,
+        "labelPadding": 5,        
+        "titlePadding": 10,
+        "encode": {
+            "grid": {
+                "update": {
+                "stroke": {"value": "#777"},
+                "opacity": {"value": 0.3},
+                "strokeWidth":{"value": 0.3},
+                "strokeDash": {"value": [8,4]}               
+                }
+            },            
+            "ticks": {
+                "update": {
+                "stroke": {"value": "#777"}
+                }
+            },
+            "labels": {
+                "update": {
+                    "fill": {"value": "#777"},
+                    "fontSize": {"value": 16},
+                    "align": {"value": "left"},
+                    "baseline": {"value": "middle"}
+                }
+            },
+            "title": {
+                "update": {
+                    "fill": {"value": "#777"},
+                    "font": {"value": "Calibri"},
+                    "fontSize": {"value": 20},
+                    "fontWeight": {"value": "normal"}
+                }
+            }            
+        }        
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "line",
+      "from": {"data": "talud"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "x"},
+          "y": {"scale": "yscale", "field": "z"},
+          "y2": {"scale": "yscale", "value": -3},
+          "fill": {"value": "white"},
+          "stroke": {"value": "kkk"},
+          "strokeCap": {"value": "round"},          
+          "strokeWidth": {"value": 4.9}
+        }
+      }
+    },
+   {
+      "type": "rule",
+      "from": {"data": "niveaus"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "green"},          
+          "x": {"value": 0},
+          "y": {"value": "40"},
+          "x2": {"value": 601},
+          "y2": {"value": 40},
+          "strokeWidth": {"value": 2},
+          "strokeDash": {"value": [18,0]},
+          "opacity": {"value": 1}
+        }
+      }
+    },
+   {
+      "type": "rule",
+      "from": {"data": "niveaus"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "steelblue"},
+          "x": {"value": 0},
+          "y": {"value": "50"},
+          "x2": {"value": 588},
+          "y2": {"value": 50},
+          "strokeWidth": {"value": 2},
+          "strokeDash": {"value": [18,0]},
+          "opacity": {"value": 0.8}
+        }
+      }
+    },
+   {
+      "type": "rule",
+      "from": {"data": "niveaus"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "orange"},
+          "x": {"value": 0},
+          "y": {"value": "10"},
+          "x2": {"value": 636},
+          "y2": {"value": 10},
+          "strokeWidth": {"value": 2},
+          "strokeDash": {"value": [18,0]},
+          "opacity": {"value": 0.5}
+        }
+      }
+    }
+  ]
+}

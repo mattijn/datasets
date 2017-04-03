@@ -1,0 +1,103 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 400,
+  "height": 400,
+
+
+  "data": [
+    {
+      "name": "dubbel",
+      "values": [      
+        {"perc": 0.0,"sector": 22.5},
+        {"perc": 0.1,"sector": 22.5},
+        {"perc": 0.1,"sector": 22.5},
+        {"perc": 0.1,"sector": 22.5},
+        {"perc": 0.6,"sector": 22.5},
+        {"perc": 6.0,"sector": 22.5},
+        {"perc": 5.8,"sector": 22.5},
+        {"perc": 8.5,"sector": 22.5},
+        {"perc": 18.7,"sector": 22.5},
+        {"perc": 17.3,"sector": 22.5},
+        {"perc": 16.1,"sector": 22.5},
+        {"perc": 25.5,"sector": 22.5},
+        {"perc": 1.0,"sector": 22.5},
+        {"perc": 0.0,"sector": 22.5},
+        {"perc": 0.0,"sector": 22.5},
+        {"perc": 0.0,"sector": 22.5}
+        ],
+        "transform": [{"type": "pie", "field": "sector"}]
+
+     }
+  ],
+
+
+  "scales": [
+    {
+      "name": "r",
+      "type": "sqrt",
+
+      "domain": {"data": "dubbel", "field": "perc"},
+      "zero": true,
+      "range": [23, 300]
+
+    }
+  ],
+
+
+  "marks": [
+    {
+      "type": "arc",
+
+      "from": {"data": "dubbel"},
+
+      "encode": {
+        "enter": {
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+          "startAngle": {"field": "startAngle"},
+          "endAngle": {"field": "endAngle"},
+          "innerRadius": {"value": 20},
+
+          "outerRadius": {"scale": "r", "field": "perc"},
+          "strokeWidth": {"value": "0.5"},
+          "stroke": {"value": "#3399ff"}
+        },
+        "update": {
+          "fill": {"value": "#80bfff"},
+          "innerRadius": {"value": 20},
+          "outerRadius": {"scale": "r", "field": "perc"}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"},
+          "innerRadius": {"value": 30},
+          "outerRadius": {"scale": "r", "signal": "1.0 * datum.perc"}
+        }
+      }
+    },
+
+
+    {
+      "type": "text",
+      "from": {"data": "dubbel"},
+
+      "encode": {
+        "enter": {
+          "x": {"field": {"group": "width"}, "mult": 0.5},
+          "y": {"field": {"group": "height"}, "mult": 0.5},
+
+          "radius": {"scale": "r", "field": "perc", "offset": 20},
+
+          "theta": {"signal": "(datum.startAngle + datum.endAngle)/2"},
+
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"},
+
+          "text": {"field": "perc"},
+          "font": {"value": "Arial"},                  
+          "fontSize": {"value": 14},
+          "fontWeight": {"value": "normal"}            
+        }
+      }
+    }
+  ]
+}

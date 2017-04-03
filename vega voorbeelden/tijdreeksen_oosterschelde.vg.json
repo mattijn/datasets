@@ -1,0 +1,226 @@
+{
+  "$schema": "http://vega.github.io/schema/vega/v3.0.json",
+  "padding": 5,
+  "autosize": "pad",
+  "signals": [
+    {
+      "name": "width",
+      "update": "data('layout')[0].width"
+    },
+    {
+      "name": "height",
+      "update": "data('layout')[0].height"
+    },
+    { "name": "y_waterstand", "value": "Roompot Binnen",
+      "bind": {"input": "select", 
+               "options": ["Roompot Buiten", "Roompot Binnen","OS4","Schaar Buiten","Schaar Binnen",
+               "Hammen Buiten","Hammen Binnen","Burghsluis","Zeelandbrug Noord","Colijnsplaat",
+               "Kats","Stavenisse","Sint Annaland","Sint Philipsland","Philipsdam West","Slaak West",
+               "Hansweert Binnen","Wemeldinge","Yerseke","Krabbendijke","Bergse Diepsluis",
+               "Marollegat","Oesterdam","Rattekaai","Debiet Roompot","Debiet Schaar","DebietHammen",
+               "Schuifstand Roompot","Schuifstand Schaar","Schuifstand Hammen"]} },
+    { "name": "nullSize", "value": 8 },
+    { "name": "nullGap", "update": "nullSize + 10" }    
+  ],
+  "data": [
+    {
+      "name": "source",
+      "url": "https://rawgit.com/mattijn/datasets/master/Tijdreeksen_Oosterscheldestations.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "Roompot Binnen": "number",
+          "Roompot Buiten": "number",
+          "OS4": "number",
+          "Schaar Buiten": "number",
+          "Schaar Binnen": "number",
+          "Hammen Buiten": "number",
+          "Hammen Binnen": "number",
+          "Burghsluis": "number",
+          "Zeelandbrug Noord": "number",
+          "Colijnsplaat": "number",
+          "Kats": "number",
+          "Stavenisse": "number",
+          "Sint Annaland": "number",
+          "Sint Philipsland": "number",
+          "Philipsdam West": "number",
+          "Slaak West": "number",
+          "Hansweert Binnen": "number",
+          "Wemeldinge": "number",
+          "Yerseke": "number",
+          "Krabbendijke": "number",
+          "Bergse Diepsluis": "number",
+          "Marollegat": "number",
+          "Oesterdam": "number",
+          "Rattekaai": "number",
+          "Debiet Roompot": "number",
+          "Debiet Schaar": "number",
+          "DebietHammen": "number",
+          "Schuifstand Roompot": "number",
+          "Schuifstand Schaar": "number",
+          "Schuifstand Hammen": "number",                    
+          "datetime": "date"
+        },
+        "delimiter": ","
+      }
+    },
+    {
+      "name": "layout",
+      "values": [
+        {
+          "_id": 739807,
+          "width": 200,
+          "height": 200
+        }
+      ],
+      "transform": [
+        {
+          "type": "formula",
+          "as": "width",
+          "expr": "800"
+        },
+        {
+          "type": "formula",
+          "as": "height",
+          "expr": "400"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "main",
+      "type": "group",
+      "description": "Waterstanden in de Oosterschelde.",
+      "from": {
+        "data": "layout"
+      },
+      "encode": {
+        "update": {
+          "width": {
+            "field": "width"
+          },
+          "height": {
+            "field": "height"
+          }
+        }
+      },
+      "marks": [
+        {
+          "name": "marks",
+          "type": "line",
+          "from": {
+            "data": "source"
+          },
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x",
+                "field": "datetime"
+              },
+              "y": {
+                "scale": "y",
+                "field": {"signal": "y_waterstand"}
+              },
+              "strokeWidth": {
+                "value": 2
+              },
+              "stroke": {
+                "value": "#4682b4"
+              }
+            }
+          }
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "time",
+          "domain": {
+            "data": "source",
+            "field": "datetime"
+          },
+          "range": [
+            0,
+            600
+          ],
+          "round": true          
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "domain": {
+            "data": "source",
+            "field": {"signal": "y_waterstand"}
+          },
+          "range": [
+            400,
+            0
+          ],
+          "round": true,
+          "nice": true,
+          "zero": true
+        }
+      ],
+      "axes": [
+        {
+          "scale": "x",
+          "orient": "bottom",
+          "offset": 20,          
+          "tickCount": 10,
+          "title": "Datum",
+          "zindex": 1,
+          "encode": {
+            "labels": {
+              "update": {
+                "text": {
+                  "signal": "timeFormat(datum.value, '%b %d, %Y')"
+                },
+                "angle": {
+                  "value": -50
+                },
+                "align": {
+                  "value": "right"
+                },
+                "baseline": {
+                  "value": "middle"
+                }
+              }
+            }
+          }
+        },
+        {
+          "scale": "x",
+          "domain": false,
+          "labels": false,
+          "grid": true,
+          "orient": "bottom",
+          "ticks": false,
+          "tickCount": 5,
+          "zindex": 0,
+          "gridScale": "y"
+        },
+        {
+          "scale": "y",
+          "format": "s",
+          "orient": "left",
+          "offset": 20,          
+          "title": {"signal": "y_waterstand"},
+          "domain": {"data": "source", "field": {"signal": "y_waterstand"}},
+          "zindex": 1
+        },
+        {
+          "scale": "y",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": true,
+          "orient": "left",
+          "ticks": false,
+          "zindex": 0,
+          "gridScale": "x"
+        }
+      ]
+    }
+  ]
+}

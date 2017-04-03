@@ -1,0 +1,299 @@
+{
+  "$schema": "http://vega.github.io/schema/vega/v3.0.json",
+  "padding": 5,
+  "autosize": "pad",
+  "signals": [
+    {"name": "width","update": "data('layout')[0].width"},
+    {"name": "height","update": "data('layout')[0].height"}
+  ],
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {"waterstand": 15.2,"frequentie": 0.1131702},
+        {"waterstand": 15.3,"frequentie": 0.1005654},
+        {"waterstand": 15.4,"frequentie": 0.087884739},
+        {"waterstand": 15.5,"frequentie": 0.077289566},
+        {"waterstand": 15.6,"frequentie": 0.067216396},
+        {"waterstand": 15.7,"frequentie": 0.057845965},
+        {"waterstand": 15.8,"frequentie": 0.049733866},
+        {"waterstand": 15.9,"frequentie": 0.041748479},
+        {"waterstand": 16.0,"frequentie": 0.034775663},
+        {"waterstand": 16.1,"frequentie": 0.029016647},
+        {"waterstand": 16.2,"frequentie": 0.024304695},
+        {"waterstand": 16.3,"frequentie": 0.020148421},
+        {"waterstand": 16.4,"frequentie": 0.016645148},
+        {"waterstand": 16.5,"frequentie": 0.013650425},
+        {"waterstand": 16.6,"frequentie": 0.011218123},
+        {"waterstand": 16.7,"frequentie": 0.0089963209},
+        {"waterstand": 16.8,"frequentie": 0.0069746193},
+        {"waterstand": 16.9,"frequentie": 0.0052340645},
+        {"waterstand": 17.0,"frequentie": 0.0037789331},
+        {"waterstand": 17.1,"frequentie": 0.0026245182},
+        {"waterstand": 17.2,"frequentie": 0.0017343683},
+        {"waterstand": 17.3,"frequentie": 0.0011132543},
+        {"waterstand": 17.4,"frequentie": 0.00069478055},
+        {"waterstand": 17.5,"frequentie": 0.00041740347},
+        {"waterstand": 17.6,"frequentie": 0.00024611963},
+        {"waterstand": 17.7,"frequentie": 0.00014169683},
+        {"waterstand": 17.8,"frequentie": 0.000082026672},
+        {"waterstand": 17.9,"frequentie": 0.000046522305},
+        {"waterstand": 18.0,"frequentie": 0.000028103053},
+        {"waterstand": 18.1,"frequentie": 0.000017673468},
+        {"waterstand": 18.2,"frequentie": 0.000010981082},
+        {"waterstand": 18.3,"frequentie": 0.0000068735044}
+        ],
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"frequentie\"] !== null && !isNaN(datum[\"frequentie\"]) && datum[\"waterstand\"] !== null && !isNaN(datum[\"waterstand\"])"
+        },
+        {
+          "type": "collect",
+          "sort": {"field": "frequentie","order": "descending"}
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "values": [{"_id": 125,"width": 800,"height": 400}],
+      "transform": [
+        {"type": "formula","as": "width","expr": "800"},
+        {"type": "formula","as": "height","expr": "400"}
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "main",
+      "type": "group",
+      "description": "Overschrijdingsfrequentielijn",
+      "from": {"data": "layout"},
+      "encode": {
+        "update": {
+          "width": {"field": "width"},
+          "height": {"field": "height"}
+        }
+      },
+      "marks": [
+        {
+          "name": "marks",
+          "type": "line",
+          "from": {"data": "source"},
+        
+          "encode": {
+            "update": {
+              "x": {"scale": "x","field": "frequentie"},
+              "y": {"scale": "y","field": "waterstand"},
+              "strokeWidth": {"value": 2.5},
+              "interpolate": {"value": "linear"},
+              "stroke": {"value": "#0099ff"}
+            }
+          }
+        },
+        {
+          "type": "symbol",
+          "from": {"data": "source"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": "frequentie"},
+              "y": {"scale": "y", "field": "waterstand"},
+              "align": {"value": "center"},
+              "baseline": {"value": "middle"},
+              "size": {"value": 30},             
+              "fill": {"value": "orange"},
+              "stroke": {"value": "#0099ff"},
+              "strokeWidth": {"value": 1},       
+              "strokeOpacity": {"value": 1.0},         
+              "fillOpacity": {"value": 1.0}             
+            },
+            "hover": {
+                "stroke": {"value": "red"},
+                "strokeWidth": {"value": 2},
+                "strokeOpacity": {"value": 1.0},
+                "fillOpacity": {"value": 1.0}
+            }
+          }
+        }        
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "log",
+          "domain": {"data": "source","field": "frequentie"},
+          "range": [0,600],
+          "reverse":"true",
+          "round": true,
+          "nice": true,
+          "zero": false
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "domain": {"data": "source","field": "waterstand"},
+          "range": [400,0],
+          "round": true,
+          "nice": true,
+          "zero": false
+        },
+        {
+            "name": "scale_convert",
+            "type": "threshold",
+            "domain":["1e-10","1e-9","1e-8","1e-7","1e-6","1e-5","1e-4","1e-3","1e-2","1e-1","1e+0","1e1","1e2","1e3","1e4","1e5","1e6","1e7","1e8","1e9","1e10"],
+            "range":["10\u207b\u00b9\u2071","10\u207b\u00b9\u2070","10\u207b\u2079","10\u207b\u2078","10\u207b\u2077","10\u207b\u2076","10\u207b\u2075","10\u207b\u2074","10\u207b\u00b3","10\u207b\u00b2","10\u207b\u00b9","10\u2070","10\u00b9","10\u00b2","10\u00b3","10\u2074","10\u2075","10\u2076","10\u2077","10\u2078","10\u2079"]       
+        } 
+    ],
+    "axes": [
+      {
+       "scale": "x",
+       "format": "e",
+       "orient": "bottom",
+       "tickCount":6,
+       "tickSize": 5,
+       "encode": {
+           "ticks": {
+               "update": {
+                   "stroke": {"value": "#cccccc"},
+                   "strokeWidth": {"value": 1.5}
+               }
+           },
+           "labels": {
+               "interactive": true,
+               "update": {
+                  "fill": {"value": "#666666"},
+                  "angle": {"value": 0},
+                  "align": {"value": "right"},
+                  "font": {"value": "Arial"},
+                  "text": {"scale": "scale_convert", "field":"value"},
+                  "dx": {"value": 10},                          
+                  "fontSize": {"value": 12}
+               },
+               "hover": {
+                  "fill": {"value": "firebrick"}
+                  }
+               },
+               "title": {
+                  "update": {
+                    "font": {"value": "Arial"},                  
+                    "fontSize": {"value": 15},
+                    "fontWeight": {"value": "normal"},
+                    "fill": {"value": "#666666"}
+                  }
+               },
+               "domain": {
+                   "update": {
+                       "stroke": {"value": "#cccccc"},
+                       "strokeWidth": {"value": 1.2}
+                    }
+               }                                             
+          },         
+          "title": "Frequentie (jaar)",
+          "titlePadding": 5,
+          "offset": 10,
+          "zindex": 1
+        },
+        {
+          "scale": "x",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": true,
+          "orient": "bottom",
+          "ticks": true,
+          "tickSize": 3,
+          "tickCount": 10,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 0.8}
+                }
+              },
+             "grid": {
+                "update": {                 
+                  "stroke": { "value": "#e6e6e6" },
+                  "strokeWidth": { "value": 0.5 }
+                }
+              }               
+          },          
+          "offset": 10,
+          "zindex": 0,
+          "gridScale": "y"
+        },
+        {
+          "scale": "y",
+          "format": "s",
+          "orient": "left",
+          "tickCount": 8,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },             
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12},
+                        "dx": {"value": -3}
+                      },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },                   
+          "title": "Belastingniveau (m+NAP)",
+          "titlePadding": 10,
+          "offset": 10,          
+          "zindex": 1
+        },
+        {
+          "scale": "y",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": true,
+          "orient": "left",
+          "ticks": true,
+          "tickCount": 8,
+          "offset": 10,
+          "encode": {
+             "ticks": {
+                "update": {
+                    "stroke": {"value": "#cccccc"},
+                    "strokeWidth": {"value": 0.8}
+                }
+             },
+             "grid": {
+                "update": {                 
+                  "stroke": { "value": "#e6e6e6" },
+                  "strokeWidth": { "value": 0.5 }
+                }
+              }               
+          },          
+          "zindex": 0,
+          "gridScale": "x"
+        }
+      ]
+    }
+  ]
+}

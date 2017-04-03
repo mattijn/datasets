@@ -1,0 +1,204 @@
+{
+  "$schema": "http://vega.github.io/schema/vega/v3.0.json",
+  "padding": 5,
+  "autosize": "pad",
+  "signals": [
+    {"name": "width","update": "data('layout')[0].width"},
+    {"name": "height","update": "data('layout')[0].height"}
+  ],
+  "data": [
+    {
+      "name": "source",
+      "url": "https://rawgit.com/mattijn/datasets/master/ruwe_profielen_profielengenerator.csv",
+      "format": {
+        "type": "csv",
+        "parse": {"x": "number","y": "number"},
+        "delimiter": ","
+      },
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"x\"] !== null && !isNaN(datum[\"x\"]) && datum[\"y\"] !== null && !isNaN(datum[\"y\"])"
+        },
+        {
+          "type": "collect",
+          "sort": {"field": "x","order": "descending"}
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "values": [{"_id": 125,"width": 200,"height": 200}],
+      "transform": [
+        {"type": "formula","as": "width","expr": "200"},
+        {"type": "formula","as": "height","expr": "200"}
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "main",
+      "type": "group",
+      "description": "Dwarsprofiel van kering.",
+      "from": {"data": "layout"},
+      "encode": {
+        "update": {
+          "width": {"field": "width"},
+          "height": {"field": "height"}
+        }
+      },
+      "marks": [
+        {
+          "name": "marks",
+          "type": "line",
+          "from": {"data": "source"},
+        
+          "encode": {
+            "update": {
+              "x": {"scale": "x","field": "x"},
+              "y": {"scale": "y","field": "y"},
+              "strokeWidth": {"value": 2.5},
+              "interpolate": {"value": "linear"},
+              "stroke": {"value": "#3366cc"}
+            }
+          }
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "domain": {"data": "source","field": "x"},
+          "range": [0,1100],
+          "round": true,
+          "nice": true,
+          "zero": true
+        },
+        {
+          "name": "y",
+          "type": "linear",
+          "domain": {"data": "source","field": "y"},
+          "range": [200,0],
+          "round": true,
+          "nice": true,
+          "zero": true
+        }
+      ],
+      "axes": [
+        {
+          "scale": "x",
+          "format": "s",
+          "orient": "bottom",
+          "tickCount": 10,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12}
+                        },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },         
+          "title": "Afstand (m)",
+          "titlePadding": 5,
+          "offset": 10,
+          "zindex": 1
+        },
+        {
+          "scale": "x",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": false,
+          "orient": "bottom",
+          "ticks": false,
+          "tickCount": 10,
+          "zindex": 0,
+          "gridScale": "y"
+        },
+        {
+          "scale": "y",
+          "format": "s",
+          "orient": "left",
+          "tickCount": 4,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12}                       
+                      },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },                   
+          "title": "Hoogte (m+NAP)",
+          "titlePadding": 10,
+          "offset": 10,          
+          "zindex": 1
+        },
+        {
+          "scale": "y",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": false,
+          "orient": "left",
+          "ticks": false,
+          "zindex": 0,
+          "gridScale": "x"
+        }
+      ]
+    }
+  ]
+}

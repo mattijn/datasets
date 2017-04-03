@@ -1,0 +1,312 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 750,
+  "height": 750,
+  "padding": 5,
+  "autosize": {"type": "fit", "resize": true},
+
+  "signals": [
+    { "name": "x_as", "value": "Hs",
+      "bind": {"input": "select", "options": ["ZWL", "Discharge Rijn", "Waterlevel HvH", "Wind speed", "windrichting", "sluitsituatie","Hs","Tp","Tm-10"]} },
+    { "name": "y_as", "value": "Tm-10",
+      "bind": {"input": "select", "options": ["ZWL", "Discharge Rijn", "Waterlevel HvH", "Wind speed", "windrichting", "sluitsituatie","Hs","Tp","Tm-10"]} },
+    { "name": "Kleurenas", "value": "Wind speed",
+      "bind": {"input": "select", "options": ["ZWL", "Discharge Rijn", "Waterlevel HvH", "Wind speed", "windrichting", "sluitsituatie","Hs","Tp","Tm-10"]} },
+    { "name": "Grootteas", "value": "windrichting",
+      "bind": {"input": "select", "options": ["ZWL", "Discharge Rijn", "Waterlevel HvH", "Wind speed", "windrichting", "sluitsituatie","Hs","Tp","Tm-10"]} },
+    { "name": "nullSize", "value": 10 },
+    { "name": "nullGap", "update": "nullSize + 10" },
+    { "name": "Q_rijn", "value": "Discharge Rijn"},
+    { "name": "m_HvH", "value": "Waterlevel HvH"}
+  ],
+
+  "data": [
+    {
+      "name": "hydra",
+      "url": "https://rawgit.com/mattijn/datasets/master/hydra_sql_invoer.json",
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "'(' + datum[Q_rijn] + '), (' + datum[m_HvH] + '), (' + 22.5*datum.windrichting + ')'",
+          "as":   "tooltip"
+        }
+      ]
+    },
+    {
+      "name": "valid",
+      "source": "hydra",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[x_as] != 0.0 && datum[y_as] != 0.0"
+        }
+      ]
+    },
+    {
+      "name": "nullXY",
+      "source": "hydra",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[x_as] == 0.0 && datum[y_as] == 0.0"
+        },
+        { "type": "aggregate" }
+      ]
+    },
+    {
+      "name": "nullY",
+      "source": "hydra",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[x_as] != 0.0 && datum[y_as] == 0.0"
+        }
+      ]
+    },
+    {
+      "name": "nullX",
+      "source": "hydra",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[x_as] == 0.0 && datum[y_as] != 0.0"
+        }
+      ]
+    }  
+  ],
+
+  "scales": [
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": [{"signal": "height - nullGap"}, 0],
+      "nice": true,
+      "domain": {"data": "valid", "field": {"signal": "y_as"}}
+    },
+    {
+      "name": "xscale",
+      "type": "linear",
+      "grid": true,
+      "range": [{"signal": "nullGap"}, {"signal": "width"}],
+      "nice": true,
+      "domain": {"data": "valid", "field": {"signal": "x_as"}}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": {"scheme": "category10"},      
+      "domain": {"data": "hydra", "field": {"signal": "Kleurenas"}}
+    },
+    {
+      "name": "size",
+      "type": "linear",
+      "domain": {"data": "hydra", "field": {"signal": "Grootteas"}},
+      "range": [4,200]
+    }        
+  ],
+
+  "axes": [
+    {
+      "orient": "bottom", 
+      "scale": "xscale", 
+      "offset": 5, 
+      "grid": true,
+      "title": {"signal": "x_as"},
+      "encode": {
+        "labels":{
+          "interactive": true,
+          "update": {
+                "fill": {"value": "black"},
+                "fillOpacity": {"value": 1.0},
+                "fontWeight": {"value": "normal"},
+                "fontSize": {"value": 16},
+                "angle": {"value": -50},
+                "align": {"value": "right"},
+                "baseline": {"value": "middle"},
+                "dx": {"value": -1},
+                "dy": {"value": 5},
+                "tooltip": {"signal": "datum.value < 14000 ? 'Less than half' : 'More than half' "}
+          },
+          "hover": {
+            "fill": {"value": "red"},
+            "fillOpacity": {"value": 1.0}
+          }
+        }
+      }      
+    },
+    {
+      "orient": "left", 
+      "scale": "yscale", 
+      "offset": 5, 
+      "format": "s",
+      "grid": true,
+      "title": {"signal": "y_as"},
+      "encode": {
+        "labels":{
+          "interactive": true,
+          "update": {
+                "fill": {"value": "black"},
+                "fillOpacity": {"value": 1.0},
+                "fontWeight": {"value": "normal"},
+                "fontSize": {"value": 16},
+                "angle": {"value": 0}
+          },
+          "hover": {
+            "fill": {"value": "red"},
+            "fillOpacity": {"value": 1.0}
+          }
+        }
+      }         
+    }
+  ],
+
+  "legends": [
+    {
+      "size": "size",
+      "title": {"signal": "Grootteas"},
+      "format": "s",
+      "encode": {
+        "symbols": {
+          "update": {
+            "strokeWidth": {"value": 2},
+            "opacity": {"value": 1.0},
+            "stroke": {"value": "#4682b4"},
+            "shape": {"value": "circle"}
+          }
+        }
+      }
+    },
+    {
+      "fill": "color",
+      "title": {"signal": "Kleurenas"},
+      "format": "s",
+      "encode": {
+        "symbols": {
+          "update": {
+            "strokeWidth": {"value": 0.2},
+            "opacity": {"value": 1.0},
+            "shape": {"value": "circle"}
+          }
+        }
+      }
+    }    
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "valid"},
+
+      "encode": {
+        "enter": {
+          "size": {"value": 50},
+          "tooltip": {"field": "tooltip"}
+        },
+        "update": {
+          "x": {"scale": "xscale", "field": {"signal": "x_as"}},
+          "y": {"scale": "yscale", "field": {"signal": "y_as"}},
+          "fill": {"scale": "color", "field": {"signal": "Kleurenas"}},
+          "size": {"scale": "size", "field": {"signal": "Grootteas"}},
+          "fillOpacity": {"value": 0.3},
+          "zindex": {"value": 0}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"},
+          "fillOpacity": {"value": 1},
+          "size": {"value": 200},
+          "zindex": {"value": 1}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "nullY"},
+      "encode": {
+        "enter": {
+          "size": {"value": 50},
+          "tooltip": {"field": "tooltip"}
+        },
+        "update": {
+          "x": {"scale": "xscale", "field": {"signal": "x_as"}},
+          "y": {"signal": "height - nullSize/2"},
+          "fill": {"value": "#aaa"},
+          "fillOpacity": {"value": 0.2}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"},
+          "fillOpacity": {"value": 1}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "nullX"},
+      "encode": {
+        "enter": {
+          "size": {"value": 50},
+          "tooltip": {"field": "tooltip"}
+        },
+        "update": {
+          "x": {"signal": "nullSize/2"},
+          "y": {"scale": "yscale", "field": {"signal": "y_as"}},
+          "fill": {"value": "#aaa"},
+          "fillOpacity": {"value": 0.2},
+          "zindex": {"value": 0}
+        },
+        "hover": {
+          "fill": {"value": "firebrick"},
+          "fillOpacity": {"value": 1},
+          "zindex": {"value": 1}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "nullXY"},
+      "encode": {
+        "update": {
+          "x": {"signal": "nullSize", "offset": -14},
+          "y": {"signal": "height", "offset": 10},
+          "text": {"signal": "datum.count + ' nul'"},
+          "align": {"value": "right"},
+          "baseline": {"value": "top"},
+          "fill": {"value": "#999"},
+          "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "nullX"},
+      "encode": {
+        "update": {
+          "x": {"signal": "nullSize", "offset": -14},
+          "y": {"signal": "height", "offset": 10},
+          "text": {"signal": "datum.count + ' nul'"},
+          "align": {"value": "right"},
+          "baseline": {"value": "top"},
+          "fill": {"value": "#999"},
+          "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "nullY"},
+      "encode": {
+        "update": {
+          "x": {"signal": "nullSize", "offset": -14},
+          "y": {"signal": "height", "offset": 10},
+          "text": {"signal": "datum.count + ' nul'"},
+          "align": {"value": "right"},
+          "baseline": {"value": "top"},
+          "fill": {"value": "#999"},
+          "fontSize": {"value": 12}
+        }
+      }
+    }    
+  ]
+}

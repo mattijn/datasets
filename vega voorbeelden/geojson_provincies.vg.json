@@ -1,0 +1,52 @@
+{
+   "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+   "width": 500,
+   "height": 600,
+   "autosize": "none",
+   "signals": [{
+      "name": "translate0",
+      "update": "width / 2"
+   }, {
+      "name": "translate1",
+      "update": "height / 2"
+   }],
+   "projections": [{
+      "name": "projection",
+      "type": "mercator",
+      "scale": 5000,
+      "rotate": [0,0,0],
+      "center": [5.468843,52.06626],
+      "translate": [{"signal": "translate0"}, {"signal": "translate1"}]
+   }],
+   "data": [{
+      "name": "nederland",
+      "url": "https://rawgit.com/mattijn/datasets/master/provinces_NL.json",
+      "format": {
+         "type": "json",
+         "property": "features"
+      }
+   }],
+   "marks": [{
+      "type": "shape",
+      "from": {
+         "data": "nederland"
+      },
+      "encode": {
+         "update": {
+            "strokeWidth": {"value": 0.5},
+            "stroke": {"value": "darkblue"},
+            "fill": {"value": "lightblue"},
+            "fillOpacity": {"value": 0.5}
+         },
+         "hover": {
+            "fill": {"value": "#66C2A5"},
+            "strokeWidth": {"value": 2},
+            "stroke": {"value": "#FC8D62"}
+         }
+      },
+      "transform": [{
+         "type": "geoshape",
+         "projection": "projection"
+      }]
+   }]
+}

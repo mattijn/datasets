@@ -1,0 +1,217 @@
+{
+  "$schema": "http://vega.github.io/schema/vega/v3.0.json",
+  "padding": 5,
+  "autosize": "pad",
+  "signals": [
+    {
+      "name": "width",
+      "update": "data('layout')[0].width"
+    },
+    {
+      "name": "height",
+      "update": "data('layout')[0].height"
+    }
+  ],
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {
+          "x": 0,
+          "y": 1,
+          "_id": 125
+        },
+        {
+          "x": 1,
+          "y": 10,
+          "_id": 126
+        },
+        {
+          "x": 2,
+          "y": 100,
+          "_id": 127
+        },
+        {
+          "x": 3,
+          "y": 1000,
+          "_id": 128
+        }
+      ],
+      "format": {
+        "type": "json",
+        "parse": {
+          "x": "number",
+          "y": "number"
+        }
+      },
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"x\"] !== null && !isNaN(datum[\"x\"]) && datum[\"y\"] !== null && !isNaN(datum[\"y\"])"
+        },
+        {
+          "type": "filter",
+          "expr": "datum[\"y\"] > 0"
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "values": [
+        {
+          "_id": 133,
+          "width": 400,
+          "height": 400
+        }
+      ],
+      "transform": [
+        {
+          "type": "formula",
+          "as": "width",
+          "expr": "400"
+        },
+        {
+          "type": "formula",
+          "as": "height",
+          "expr": "400"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "main",
+      "type": "group",
+      "from": {
+        "data": "layout"
+      },
+      "encode": {
+        "update": {
+          "width": {
+            "field": "width"
+          },
+          "height": {
+            "field": "height"
+          }
+        }
+      },
+      "marks": [
+        {
+          "name": "marks",
+          "type": "symbol",
+          "role": "point",
+          "from": {
+            "data": "source"
+          },
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "x",
+                "field": "x"
+              },
+              "y": {
+                "scale": "y",
+                "field": "y"
+              },
+              "size": {
+                "value": 30
+              },
+              "shape": {
+                "value": "circle"
+              },
+              "opacity": {
+                "value": 0.7
+              },
+              "strokeWidth": {
+                "value": 2
+              },
+              "stroke": {
+                "value": "#4682b4"
+              },
+              "fill": {
+                "value": "transparent"
+              }
+            }
+          }
+        }
+      ],
+      "scales": [
+        {
+          "name": "x",
+          "type": "linear",
+          "domain": {
+            "data": "source",
+            "field": "x"
+          },
+          "range": [
+            0,
+            400
+          ],
+          "round": true,
+          "nice": true,
+          "zero": true
+        },
+        {
+          "name": "y",
+          "type": "log",
+          "domain": [1000,1],
+          "range": [
+            400,
+            0
+          ],
+          "round": true,
+          "nice": true
+        },
+        {
+          "name": "ylabels",
+          "type": "ordinal",
+          "range": ["two-hundred","one-hundred","fifty","ten","one"]
+        }        
+      ],
+      "axes": [
+        {
+          "scale": "x",
+          "format": "s",
+          "orient": "bottom",
+          "tickCount": 5,
+          "title": "x",
+          "zindex": 1
+        },
+        {
+          "scale": "x",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": true,
+          "orient": "bottom",
+          "ticks": false,
+          "tickCount": 5,
+          "zindex": 0,
+          "gridScale": "y"
+        },
+        {
+          "scale": "y",
+          "format": "s",
+          "orient": "left",
+          "title": "y",
+          "zindex": 1,
+          "values": [200,100,50,10,1],
+          "encode":{
+            "labels":{"update":{"text":{"scale":"ylabels","field":"value"}}}
+          }          
+        },
+        {
+          "scale": "y",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": true,
+          "orient": "left",
+          "ticks": false,
+          "zindex": 0,
+          "gridScale": "x"
+        }
+      ]
+    }
+  ]
+}
