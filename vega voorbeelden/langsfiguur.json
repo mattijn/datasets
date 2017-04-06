@@ -1,0 +1,403 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v3.0.json",
+  "width": 900,
+  "height": 580,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "source",
+      "url": "https://rawgit.com/mattijn/datasets/master/ruwe_profielen_profielengenerator.csv",
+      "format": {
+        "type": "csv",
+        "parse": {"x": "number","y": "number"},
+        "delimiter": ","
+      },
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum[\"x\"] !== null && !isNaN(datum[\"x\"]) && datum[\"y\"] !== null && !isNaN(datum[\"y\"])"
+        },
+        {
+          "type": "collect",
+          "sort": {"field": "x","order": "ascending"}
+        }
+      ]
+    }
+  ],
+
+  "signals": [
+    { "name": "detailDomain" },
+    { "name": "detailExtent", "value": [0, 200] }    
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "name": "detail",
+      "encode": {
+        "enter": {
+          "height": {"value": 390},
+          "width": {"value": 900}
+        }
+      },
+      "scales": [
+        {
+          "name": "xDetail",
+          "type": "linear",
+          "range": "width",
+          "domain": {"data": "source", "field": "x"},
+          "domainRaw": {"signal": "detailDomain"}
+        },
+        {
+          "name": "yDetail",
+          "type": "linear",
+          "range": [390, 0],
+          "domain": {"data": "source", "field": "y"},
+          "nice": true, "zero": true
+        }
+      ],
+      "axes": [
+        {
+          "scale": "xDetail",
+          "format": "s",
+          "orient": "bottom",
+          "tickCount": 15,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12}
+                        },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },         
+          "title": "Locatienummer",
+          "titlePadding": 5,
+          "offset": 10,
+          "zindex": 1
+        },
+        {
+          "scale": "xDetail",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": false,
+          "orient": "bottom",
+          "ticks": false,
+          "tickCount": 10,
+          "zindex": 0
+        },
+        {
+          "scale": "yDetail",
+          "format": "s",
+          "orient": "left",
+          "tickCount": 4,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12}                       
+                      },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },                   
+          "title": "Belasting",
+          "titlePadding": 10,
+          "offset": 10,          
+          "zindex": 1
+        },
+        {
+          "scale": "yDetail",
+          "domain": false,
+          "format": "s",
+          "labels": false,
+          "grid": false,
+          "orient": "left",
+          "ticks": false,
+          "zindex": 0,
+          "gridScale": "x"
+        }
+      ],
+      "marks": [
+        {
+          "type": "group",
+          "encode": {
+            "enter": {
+              "height": {"field": {"group": "height"}},
+              "width": {"field": {"group": "width"}},
+              "clip": {"value": true}
+            }
+          },
+          "marks": [
+            {
+              "type": "line",
+              "from": {"data": "source"},
+              "encode": {
+                "update": {
+                  "x": {"scale": "xDetail", "field": "x"},
+                  "y": {"scale": "yDetail", "field": "y"},
+                  "strokeWidth": {"value": 1},
+                  "interpolate": {"value": "step-before"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "type": "group",
+      "name": "overview",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": 470},
+          "height": {"value": 70},
+          "width": {"value": 900},
+          "fill": {"value": "transparent"}
+        }
+      },
+      "signals": [
+        {
+          "name": "brush", "value": 0,
+          "on": [
+            {
+              "events": "@overview:mousedown",
+              "update": "[x(), x()]"
+            },
+            {
+              "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
+              "update": "[brush[0], clamp(x(), 0, width)]"
+            },
+            {
+              "events": {"signal": "delta"},
+              "update": "clampRange([anchor[0] + delta, anchor[1] + delta], 0, width)"
+            }
+          ]
+        },
+        {
+          "name": "anchor", "value": null,
+          "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+        },
+        {
+          "name": "xdown", "value": 0,
+          "on": [{"events": "@brush:mousedown", "update": "x()"}]
+        },
+        {
+          "name": "delta", "value": 0,
+          "on": [
+            {
+              "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
+              "update": "x() - xdown"
+            }
+          ]
+        },
+        {
+          "name": "detailDomain",
+          "push": "outer",
+          "on": [
+            {
+              "events": {"signal": "brush"},
+              "update": "span(brush) ? invert('xOverview', brush) : null"
+            }
+          ]
+        }
+      ],
+      "scales": [
+        {
+          "name": "xOverview",
+          "type": "time",
+          "range": "width",
+          "domain": {"signal": "detailExtent"}
+        },
+        {
+          "name": "yOverview",
+          "type": "linear",
+          "range": [70, 0],
+          "domain": {"data": "source", "field": "y"},
+          "nice": true, "zero": true
+        },
+        {
+        "name": "xscale",
+        "type": "linear",
+        "domain": [0,200],
+        "range": "width"
+        },
+        {
+        "name": "yscale",
+        "domain": {"data": "source", "field": "y"},
+        "nice": true, "zero": true,
+        "range": [70, 0]
+        }        
+      ],
+      "axes": [
+         {
+          "scale": "xscale",
+          "format": "s",
+          "orient": "bottom",
+          "tickCount": 15,
+          "tickSize": 5,
+          "encode": {
+              "ticks": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.5}
+                }
+              },
+              "labels": {
+                      "interactive": true,
+                      "update": {
+                        "fill": {"value": "#666666"},
+                        "angle": {"value": 0},
+                        "font": {"value": "Arial"},                          
+                        "fontSize": {"value": 12}
+                        },
+                      "hover": {
+                        "fill": {"value": "firebrick"}
+                      }
+                    },
+              "title": {
+                "update": {
+                  "font": {"value": "Arial"},                  
+                  "fontSize": {"value": 15},
+                  "fontWeight": {"value": "normal"},
+                  "fill": {"value": "#666666"}
+                }
+              },
+              "domain": {
+                "update": {
+                  "stroke": {"value": "#cccccc"},
+                  "strokeWidth": {"value": 1.2}
+                }
+              }                                             
+          },         
+          "title": "Locatienummer",
+          "titlePadding": 5,
+          "offset": 10,
+          "zindex": 1
+        }
+      ],
+      "marks": [
+        {
+            "type": "rect",
+            "interactive": true,
+            "from": {"data":"source"},
+            "encode": {
+                "enter": {
+                    "x": {"scale": "xscale", "field": "x", "offset": 1},
+                    "width": {"scale": "xscale", "band": 1, "offset": -1},
+                    "y": {"scale": "yscale", "field": "y"},
+                    "y2": {"scale": "yscale", "value": 0}
+                },
+                "update": {
+                    "fill": {"value": "steelblue"}
+                },
+                "hover": {
+                    "fill": {"value": "orange"}
+                }
+            }
+        },        
+        {
+          "type": "rect",
+          "name": "brush",
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "fill": {"value": "#333"},
+              "fillOpacity": {"value": 0.2}
+            },
+            "update": {
+              "x": {"signal": "brush[0]"},
+              "x2": {"signal": "brush[1]"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "width": {"value": 1},
+              "fill": {"value": "green"}
+            },
+            "update": {
+              "x": {"signal": "brush[0]"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "y": {"value": 0},
+              "height": {"value": 70},
+              "width": {"value": 1},
+              "fill": {"value": "green"}
+            },
+            "update": {
+              "x": {"signal": "brush[1]"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
