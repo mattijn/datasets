@@ -1,4 +1,4 @@
-date,location,discharge (m3/s)
+date,symbol,value
 2000-Jan-1,koka,36.76375
 2000-Jan-1,awash station,33.89982857142857
 2000-Jan-1,hombole,3.7636571428571433
