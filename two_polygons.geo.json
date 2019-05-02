@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]
+      },
+      "properties": {"name": "abc"}
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[1, 0], [2, 0], [2, 1], [1, 1], [1, 0]]]
+      },
+      "properties": {"name": "def"}
+    }
+  ]
+}
