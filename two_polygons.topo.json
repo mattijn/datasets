@@ -1,0 +1,17 @@
+{
+  "type": "Topology",
+  "objects": {
+    "data": {
+      "geometries": [
+        {"type": "Polygon", "properties": {"name": "abc"}, "arcs": [[-3, 0]]},
+        {"type": "Polygon", "properties": {"name": "def"}, "arcs": [[1, 2]]}
+      ],
+      "type": "GeometryCollection"
+    }
+  },
+  "arcs": [
+    [[1, 1], [0, 1], [0, 0], [1, 0]],
+    [[1, 0], [2, 0], [2, 1], [1, 1]],
+    [[1, 1], [1, 0]]
+  ]
+}
