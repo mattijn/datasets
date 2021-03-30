@@ -1,0 +1,24 @@
+[
+      {
+        "date": "2020-03-05",
+        "layers": [
+          {"key": "detectiepunt", "shape": "20200305_shapefile_results_points"},
+          {
+            "key": "detectielijn",
+            "shape": "20200305_shapefile_results_teensloot"
+          }
+        ],
+        "description": "Resultaten van 5 maart 2020"
+      },
+      {
+        "date": "2021-02-01",
+        "layers": [
+          {"key": "detectiepunt", "shape": "20210201_shapefile_results_points"},
+          {
+            "key": "detectielijn",
+            "shape": "20210201_shapefile_results_teensloot"
+          }
+        ],
+        "description": "Resultaten van 2 februari 2021"
+      }
+    ]
